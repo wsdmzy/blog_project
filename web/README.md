@@ -10,5 +10,5 @@
   xl: ≥1200px响应式栅格.
   xxl: ≥1600px响应式栅格.
 4. 解析markdown
-  react-markdown  解析
+  marked +highlight.js  解析
   markdown-navbar  菜单  瞄点定位
