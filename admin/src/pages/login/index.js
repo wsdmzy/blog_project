@@ -1,18 +1,47 @@
 import React, { useState } from 'react'
-import { Card, Input, Button, Spin } from 'antd'
+import { Card, Input, Button, Spin, message } from 'antd'
 import {UserOutlined, KeyOutlined} from '@ant-design/icons'
 import './index.css'
-
-function Login() {
+import { login } from '../../config/service'
+ 
+function Login(props) {
   const [userName, setUserName] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   const checkLogin = () => {
     setIsLoading(true)
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 1000)
+    if (!userName || !password) {
+      message.error("用户名或密码不能为空!")
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 500);
+      return false
+    }
+
+    const dataProps = {
+      username: userName,
+      password,
+    }
+   
+    // axios({
+    //   method: 'post',
+    //   url: servicePath.login,
+    //   data: dataProps,
+    //   // withCredentials: true,
+    // })
+    login(dataProps)
+      .then(res => {
+        console.log(res.data)
+        setIsLoading(false)
+        if (res.data.data === '登陆成功') {
+          localStorage.setItem('token', res.data.token)
+          // props.history.push('/index')
+        } else {
+          message.error('用户名或密码错误!')
+        }
+      })
+
   }
 
   return (
