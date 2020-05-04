@@ -43,9 +43,21 @@ module.exports = appInfo => {
     agent: false,
   };
 
+  config.security = {
+    csrf: {
+      enable: false,
+    },
+    domainWhiteList: [ '*' ],
+  };
+
   config.cors = {
-    origin: '*',
-    allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS',
+    origin: 'http://localhost:3000',
+    // credentials: true, // 允许cookie
+    allowMethods: 'GET,HEAD,PUT,OPTIONS,POST,DELETE,PATCH',
+  };
+
+  config.jwt = {
+    secret: '123456',
   };
 
   return {
