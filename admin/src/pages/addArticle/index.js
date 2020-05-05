@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './index.css'
-import { Row, Col, Input, Select, Button, DatePicker } from 'antd'
+import { Row, Col, Input, Select, Button, DatePicker, message } from 'antd'
 import TextArea from 'antd/lib/input/TextArea';
 import marked from 'marked'
-import { getType } from '../../config/service'
+import { getType, addArticle, updateArticle, getArticleById } from '../../config/service'
 
 const { Option } = Select
 
@@ -19,7 +19,7 @@ function AddArticle(props) {
   const [showDate,setShowDate] = useState()   //发布日期
   const [updateDate,setUpdateDate] = useState() //修改日志的日期
   const [typeInfo ,setTypeInfo] = useState([]) // 文章类别信息
-  const [selectedType,setSelectType] = useState(1) //选择的文章类别
+  const [selectedType,setSelectType] = useState("请选择类型") //选择的文章类别
 
   marked.setOptions({
     renderer: new marked.Renderer(),
@@ -45,14 +45,9 @@ function AddArticle(props) {
   }
 
   const getTypeInfo = () => {
-    // axios({
-    //   method: 'get',
-    //   url: servicePath.typeInfo,
-    //   Authorization: localStorage.getItem('token') 
-    // })
     getType()
       .then(res => {
-        console.log(res)
+        // console.log(res)
         if (res.data.data == '没有登陆') {
           localStorage.removeItem('openId')
           props.history.push('/')
@@ -62,10 +57,91 @@ function AddArticle(props) {
       })
   }
 
+  const getArticle = id => {
+    getArticleById(id)
+      .then(res => {
+        console.log(res)
+        setArticleTitle(res.data.data[0].title)
+        setArticleContent(res.data.data[0].article_content)
+        const html = marked(res.data.data[0].article_content)
+        setMarkdownContent(html)
+        setIntroducemd(res.data.data[0].introduce)
+        let temp = marked(res.data.data[0].introduce)
+        setIntroducehtml(temp)
+        setShowDate(res.data.data[0].addtime)
+        setSelectType(res.data.data[0].typeid)
+      })
+  }
+
   useEffect(() => {
     getTypeInfo()
+    const temId = props.match.params.id
+    if (temId) {
+      setArticleId(temId)
+      getArticle(temId)
+    }
   }, [])
 
+  const selectTypeHandler = (value) => {
+    // console.log(value)
+    setSelectType(value)
+  }
+
+  const saveArticle = ()=>{
+    if(selectedType === '请选择类型'){
+        message.error('必须选择文章类别')
+        return false
+    }else if(!articleTitle){
+        message.error('文章名称不能为空')
+        return false
+    }else if(!articleContent){
+        message.error('文章内容不能为空')
+        return false
+    }else if(!introducemd){
+        message.error('简介不能为空')
+        return false
+    }else if(!showDate){
+        message.error('发布日期不能为空')
+        return false
+    }
+    // console.log(showDate)
+    const date = showDate.replace('-','/')
+    // console.log(new Date(date).getTime())
+    // message.success('检验通过')
+    const data = {
+      type_id: selectedType,
+      title: articleTitle,
+      article_content: articleContent,
+      introduce : introducemd,
+      addtime: (new Date(date).getTime()),
+    }
+    // console.log(data)
+    if (articleId === 0) {
+      data.view_count = 0
+      addArticle(data)
+        .then(res => {
+          // console.log(res)
+          setArticleId(res.data.insertId)
+          if (res.data.isOk) {
+            message.success("文章发布成功")
+          } else {
+            message.error("文章发布失败")
+          }
+        })
+    } else {
+      data.id = articleId
+      updateArticle(data)
+        .then(res => {
+          console.log(res)
+          // setArticleId(res.data.insertId)
+          if (res.data.isOk) {
+            message.success("文章修改成功")
+          } else {
+            message.error("文章修改失败")
+          }
+        })
+    }
+}
 
   return (
     <div>
@@ -74,13 +150,19 @@ function AddArticle(props) {
           <Row gutter={10} style={{marginBottom:'20px'}}>
             <Col span={20}>
               <Input
+                value={articleTitle}
                 placeholder="博客标题"
                 size="large"
+                onChange={e => setArticleTitle(e.target.value)}
                 />
             </Col>
             <Col span={4}>
-              <Select defaultValue="Sign Up" size="large">
-                  <Option value="Sign Up">视频教程</Option>
+              <Select defaultValue={selectedType} size="large" onChange={selectTypeHandler}>
+                  {
+                    typeInfo.map(item => (
+                      <Option key={item.id} value={item.id}>{item.typename}</Option>
+                    ))
+                  }
               </Select>
             </Col>
           </Row>
@@ -90,6 +172,7 @@ function AddArticle(props) {
                 className="markdown-content"
                 rows={35}
                 placeholder="文章内容"
+                value={articleContent}
                 onChange={changeContent}
                 />
             </Col>
@@ -106,11 +189,12 @@ function AddArticle(props) {
           <Row>
             <Col span={24} style={{marginBottom: '20px'}}>
               <Button size="large" style={{marginRight: '20px'}}>暂存文章</Button>
-              <Button type="primary" size="large" >发布文章</Button>
+              <Button type="primary" size="large" onClick={saveArticle} >发布文章</Button>
             </Col>
             <Col span={24}>
               <TextArea
                 rows={4}
+                value={introducemd}
                 placeholder="文章简介"
                 onChange={changeIntroduce}
                 />
@@ -123,6 +207,7 @@ function AddArticle(props) {
                 <DatePicker
                   placeholder="发布日期"
                   size="large"
+                  onChange={(date,dateString) => setShowDate(dateString)}
                   />
               </div>
             </Col>

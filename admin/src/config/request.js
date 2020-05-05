@@ -7,9 +7,9 @@ const service = axios.create({
 })
 
 service.interceptors.request.use((config) => {
-  console.log('+++')
+  // console.log('+++')
   Object.assign(config.headers, { Authorization: `Bearer ${localStorage.getItem('token')}`})
-  console.log(config.headers)
+  // console.log(config.headers)
   return config
 }, (error) => {
   return Promise.reject(error)

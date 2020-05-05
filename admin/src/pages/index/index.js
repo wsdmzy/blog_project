@@ -9,11 +9,14 @@ import {
 import './index.css'
 import { Route } from 'react-router-dom'
 import AddArticle from '../addArticle/index'
+import articleList from '../articleList/index'
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
-function Index() {
+
+
+function Index(props) {
   
   const [collapsed, setCollapsed] = useState(false)
 
@@ -21,6 +24,14 @@ function Index() {
     setCollapsed(collapsed)
   };
 
+  const handleClickArticle = e => {
+    // console.log(e)
+    if (e.key === 'addArticle') {
+      props.history.push('/index/add')
+    } else {
+      props.history.push('/index/list')
+    }
+  }
   
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -30,12 +41,13 @@ function Index() {
           <Menu.Item key="1" icon={<PieChartOutlined />}>
             工作台
           </Menu.Item>
-          <Menu.Item key="2" icon={<DesktopOutlined />}>
-            添加文章
-          </Menu.Item>
-          <SubMenu key="sub1" icon={<UserOutlined />} title="文章管理">
-            <Menu.Item key="4">添加文章</Menu.Item>
-            <Menu.Item key="5">文章列表</Menu.Item>
+          <SubMenu key="sub1" 
+            icon={<UserOutlined />} 
+            title="文章管理"
+            onClick={handleClickArticle}
+            >
+            <Menu.Item key="addArticle">添加文章</Menu.Item>
+            <Menu.Item key="articleList">文章列表</Menu.Item>
           </SubMenu>
           <Menu.Item key="6" icon={<FileOutlined />} > 留言管理</Menu.Item>
         </Menu>
@@ -47,7 +59,10 @@ function Index() {
             <Breadcrumb.Item>工作台</Breadcrumb.Item>
           </Breadcrumb>
           <div  style={{  background: '#fff',padding: 24, minHeight: 360 }}>
-            <Route path="/index/"  exact component={AddArticle} />
+            <Route path="/index"  exact component={AddArticle} />
+            <Route path="/index/add" exact  component={AddArticle} />
+            <Route path="/index/add/:id"   component={AddArticle} />
+            <Route path="/index/list"   component={articleList} />
           </div>
         </Content>
         <Footer style={{ textAlign: 'center' }}>Ziogie@</Footer>

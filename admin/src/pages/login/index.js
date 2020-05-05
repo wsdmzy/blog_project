@@ -23,20 +23,13 @@ function Login(props) {
       username: userName,
       password,
     }
-   
-    // axios({
-    //   method: 'post',
-    //   url: servicePath.login,
-    //   data: dataProps,
-    //   // withCredentials: true,
-    // })
     login(dataProps)
       .then(res => {
         console.log(res.data)
         setIsLoading(false)
         if (res.data.data === '登陆成功') {
           localStorage.setItem('token', res.data.token)
-          // props.history.push('/index')
+          props.history.push('/index')
         } else {
           message.error('用户名或密码错误!')
         }
