@@ -11,4 +11,4 @@
   xxl: ≥1600px响应式栅格.
 4. 解析markdown
   marked +highlight.js  解析
-  markdown-navbar  菜单  瞄点定位
+  封装Tocify  实现  菜单  瞄点定位

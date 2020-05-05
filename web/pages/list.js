@@ -56,7 +56,7 @@ const MyList = (props) => {
           <div className="bread-div" >  
             <Breadcrumb>
               <Breadcrumb.Item><a href="/">首页</a></Breadcrumb.Item>
-              <Breadcrumb.Item>视频教程</Breadcrumb.Item>
+              <Breadcrumb.Item>文章列表</Breadcrumb.Item>
             </Breadcrumb>
           </div>
 
@@ -72,7 +72,7 @@ const MyList = (props) => {
                   </Link>
                 </div>
                 <div className="list-icon"> 
-                  <span><CalendarOutlined />{moment(item.addtime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                  <span><CalendarOutlined />{moment(item.addtime).format('YYYY-MM-DD')}</span>
                   <span><FolderOutlined />{item.typename}</span>
                   <span><FireOutlined />{item.view_count}人</span>
                 </div>

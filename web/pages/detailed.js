@@ -57,7 +57,7 @@ const Detailed = (props) => {
           <div className="bread-div"> 
             <Breadcrumb>
               <Breadcrumb.Item><a href="/">首页</a></Breadcrumb.Item>
-              <Breadcrumb.Item><a href="/list">视频列表</a></Breadcrumb.Item>
+              <Breadcrumb.Item><a href="/list">文章列表</a></Breadcrumb.Item>
               <Breadcrumb.Item>xxx</Breadcrumb.Item>
             </Breadcrumb>
           </div>
@@ -65,7 +65,7 @@ const Detailed = (props) => {
             {props.title}
           </div>
           <div className="list-icon center">
-            <span><CalendarOutlined />{moment(props.addtime).format('YYYY-MM-DD HH:mm:ss')}</span>
+            <span><CalendarOutlined />{moment(props.addtime).format('YYYY-MM-DD')}</span>
             <span><FolderOutlined />{props.typename}</span>
             <span><FireOutlined />{props.view_count}人</span>
           </div>
